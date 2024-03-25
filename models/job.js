@@ -37,9 +37,21 @@ const jobSchema = new mongoose.Schema({
         type: Array,
         required: true
     },
+    jobType: {
+        type: String,
+        required: false
+    },
+    information: {
+        type: String,
+        required: false
+    },
+    about: {
+        type: String,
+        required: false
+    },
     refUserId: {
         type: mongoose.ObjectId,
-    }, 
+    },
 
 },
     { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }

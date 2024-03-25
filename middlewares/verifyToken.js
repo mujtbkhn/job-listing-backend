@@ -19,4 +19,15 @@ const verifyToken = async (req, res, next) => {
     }
 }
 
-module.exports = verifyToken
+const decodeJwtToken = (authHeader) => {
+    try {
+        if (!authHeader) return
+        const decode = jwt.verify(authHeader, process.env.SECRET_KEY)
+        const userId = decode.userId || null;
+        return userId
+    } catch (error) {
+        console.log("Error:", error);
+    }
+}
+
+module.exports = { verifyToken, decodeJwtToken }

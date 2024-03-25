@@ -1,6 +1,6 @@
 const express = require("express");
 const { createJobPost, getJobDetailsById, updateJobDetailsById, getAllJobs } = require("../controllers/job");
-const verifyToken = require("../middlewares/verifyToken");
+const { verifyToken } = require("../middlewares/verifyToken");
 const router = express.Router()
 
 

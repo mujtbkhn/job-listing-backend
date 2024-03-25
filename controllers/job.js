@@ -1,7 +1,10 @@
 const job = require("../models/job")
+const { decodeJwtToken } = require("../middlewares/verifyToken");
+const mongoose = require("mongoose");
+const { ObjectId } = require("mongodb");
 
 
-const createJobPost = async (req, res) => {
+const createJobPost = async (req, res, next) => {
     try {
 
         const { companyName, logoUrl, title, description, salary, location, duration, locationType, skills, refUserId } = req.body
@@ -26,9 +29,10 @@ const createJobPost = async (req, res) => {
     }
 }
 
-const getJobDetailsById = async (req, res) => {
+const getJobDetailsById = async (req, res, next) => {
     try {
         const jobId = req.params.jobId
+        const userId = decodeJwtToken(req.headers["authorization"])
 
         const jobDetails = await job.findById(jobId)
 
@@ -38,9 +42,14 @@ const getJobDetailsById = async (req, res) => {
             })
         }
 
-        res.json({
-            data: jobDetails
-        })
+        let isEditable;
+        if (userId) {
+            const formattedUserId = new ObjectId(userId)
+            if (jobDetails.refUserId.equals(formattedUserId))
+                isEditable = true
+        }
+
+        res.json({ jobDetails, isEditable })
 
     } catch (error) {
         next(error)
@@ -48,7 +57,7 @@ const getJobDetailsById = async (req, res) => {
     }
 }
 
-const updateJobDetailsById = async (req, res) => {
+const updateJobDetailsById = async (req, res, next) => {
 
     try {
 
@@ -104,15 +113,18 @@ const getAllJobs = async (req, res, next) => {
         let filter = {}
         if (skills) {
             filteredSkills = skills?.split(",")
-            filter = { skills: { $in: filteredSkills } }
+            const caseInsensitiveFilteredSkills = filteredSkills.map(
+                (element) => new RegExp(element, "i")
+            );
+            filter = { skills: { $in: caseInsensitiveFilteredSkills } };
         }
         const jobList = await job.find({
             title: { $regex: title, $options: "i" },
             ...filter
         },
-            {
-                companyName: 1, title: 1    //second argument to only fetch any specific thing
-            }
+            // {
+            //     companyName: 1, title: 1    //second argument to only fetch any specific thing
+            // }
         )
         res.json({
             // length: jobList.length,
