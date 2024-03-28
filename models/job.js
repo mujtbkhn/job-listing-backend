@@ -39,15 +39,15 @@ const jobSchema = new mongoose.Schema({
     },
     jobType: {
         type: String,
-        required: false
+        required: true
     },
     information: {
         type: String,
-        required: false
+        required: true
     },
     about: {
         type: String,
-        required: false
+        required: true
     },
     refUserId: {
         type: mongoose.ObjectId,

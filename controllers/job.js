@@ -7,9 +7,9 @@ const { ObjectId } = require("mongodb");
 const createJobPost = async (req, res, next) => {
     try {
 
-        const { companyName, logoUrl, title, description, salary, location, duration, locationType, skills, refUserId } = req.body
+        const { companyName, logoUrl, title, description, salary, location, duration, locationType, skills, refUserId, jobType, about, information } = req.body
 
-        if (!companyName || !logoUrl || !title || !description || !salary || !location || !duration || !locationType || !skills) {
+        if (!companyName || !logoUrl || !title || !description || !salary || !location || !duration || !locationType || !skills || !jobType || !about || !information) {
             return res.status(404).json({
                 message: "invalid data"
             })
@@ -17,7 +17,7 @@ const createJobPost = async (req, res, next) => {
 
         const userId = req.userId
         const JobDetails = new job({
-            companyName, logoUrl, title, description, salary, location, duration, locationType, skills, refUserId: userId
+            companyName, logoUrl, title, description, salary, location, duration, locationType, jobType, about, information, skills, refUserId: userId
         })
 
         await JobDetails.save()
@@ -76,9 +76,9 @@ const updateJobDetailsById = async (req, res, next) => {
             })
         }
 
-        const { companyName, logoUrl, title, description, salary, location, duration, locationType, skills } = req.body
+        const { companyName, logoUrl, title, description, salary, location, duration, locationType, skills, jobType, about, information } = req.body
 
-        if (!companyName || !logoUrl || !title || !description || !salary || !location || !duration || !locationType || !skills) {
+        if (!companyName || !logoUrl || !title || !description || !salary || !location || !duration || !locationType || !skills || !jobType || !about || !information) {
             return res.status(404).json({
                 message: "invalid data"
             })
@@ -88,7 +88,7 @@ const updateJobDetailsById = async (req, res, next) => {
             { _id: jobId, refUserId: userId },
             {
                 $set: {
-                    companyName, logoUrl, title, description, salary, location, duration, locationType, skills,
+                    companyName, logoUrl, title, description, salary, location, duration, locationType, skills, jobType, about, information
 
                 },
             }
